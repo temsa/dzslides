@@ -1,3 +1,16 @@
+Server usage :
+
+  $>node server.js
+
+(or use directly ./server.js)
+
+Then go on http://127.0.0.1:3000
+
+For options, like modifying the port, see
+
+  $>node server.js -h
+
+--
 Yo,
 
     DZSlides is a HTML template to build slides in HTML5 and CSS3.
