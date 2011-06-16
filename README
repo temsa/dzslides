@@ -1,16 +1,18 @@
-Server usage :
+## Server usage ##
 
   $>node server.js
 
 (or use directly ./server.js)
 
-Then go on http://127.0.0.1:3000
+Then go on http://127.0.0.1:3000/shell (presenter mode) or http://127.0.0.1:3000/ (normal mode)
 
 For options, like modifying the port, see
 
   $>node server.js -h
 
---
+A REPL client is available by default on port 8888 ( $> telnet 127.0.0.1 8888 )
+
+## DZSlides notes ##
 Yo,
 
     DZSlides is a HTML template to build slides in HTML5 and CSS3.
