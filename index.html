@@ -2,9 +2,23 @@
 <head>
  <meta charset="utf-8">
  <title>Node.JS : WTF, JavaScript on the ServerSide !??</title>
- <script src="/socket.io/socket.io.js"></script> 
+<script src="/socket.io/socket.io.js"></script>
+<script>
+</script>
 </head>
 <body>
+<style>
+@font-face {
+    font-family: 'OrbitronBold';
+    src: url('fonts/orbitron-bold-webfont.eot');
+    src: url('fonts/orbitron-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/orbitron-bold-webfont.woff') format('woff'),
+         url('fonts/orbitron-bold-webfont.ttf') format('truetype'),
+         url('fonts/orbitron-bold-webfont.svg#OrbitronBold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+</style>
 <!-- Your Slides -->
 <!-- One section is one slide -->
 <!--
@@ -40,37 +54,473 @@ Using Node.JS :
 </section>
 
 <section>
+    <!-- This is the first slide -->
+    <h3>Who we are</h3>
+
+    <ul>
+    	<li>@Worldline <em>OD PEPS</em></li>    
+    	<li>Twitter: <em>temsa</em></li>
+    	<li>Github: <em>http://github.com/temsa</em></li>
+    </ul>
+    <aside><strong>Florian Traverse</strong></aside>
+    <ul>
+    	<li>@Worldline <em>PHT</em></li>    
+    	<li>Twitter: <em>brianclozel</em></li>
+    	<li>Github: <em>http://github.com/bclozel</em></li>
+    </ul>
+	<aside><strong>Brian Clozel</strong></aside>
+</section>
+
+
+<section>
+    <h2>Why now, why Node?</h2>
+    <h3>Server side JS</h3>
+    <ul>
+        <li>Browser wars and performance -- V8 !</li>
+        <li>JS is now a 1st class language</li>
+        <li>Focus on the web</li>
+    </ul>
+
+    <details>
+        <ul>
+            <li>Server side JS is not a brand new idea; many frameworks tried to make it happen on the server without success.</li>
+            <li>A few months ago, browser wars dramatically improved browser performance: one example - Google developed the V8 engine and they strongly focused on performance (runtime optimizations and garbage collection)</li>
+            <li>javascript dealt with its bad reputation (as a hacky language) and it is now considered as a 1st class language; tere's a fair number of devs around the world and the amount of code is huge...</li>
+            <li>Nodejs focuses on real problems; it's been specifically designed for network applications and web applications</li>
+        </ul>
+    </details>
+</section>
+
+<section>
+    <h2>NodeJS at a glance</h2>
+    <h3>Main architecture</h3>
+    <p><img src="nodejs-architecture.png" style="width:100%;"/></p>
+    <details>
+        <ul>
+            <li>NodeJS is branded as "a solution" or "a platform" rather than a framework.</li>
+            <li>As a matter of fact, tons of frameworks are being written on top of node.</li>
+            <li>NodeJS has a:
+            <ul>            
+                <li>simple, fluent API - strong focus on network and web</li>
+                <li>efficient and async bindings</li>
+                <li>optimized and powerful V8 VM (google chrome)</li>
+                <li>libuv (platform-dependent blocks in here; windows, unix support)</li>
+                <li>libeio, http_parser, DNS, crypto</li>
+            </ul>
+            </li>
+        </ul>
+    </details>
+</section>
+
+<section>
+    <h2>A random Java webapp</h2>
+    <h3>blocking IO</h3>
+    <ul>
+        <li>Makes synchronous webservices calls</li>
+        <li>waits... waits...</li>
+        <li>and hogs resources !</li>
+    </ul>
+    <aside>
+        <pre>
+            <code>
+            // blocking IO
+            WSResponse resp = wsclient.callRemoteService();
+            </code>
+        </pre>
+    </aside>
+    <details>
+        <ul>
+            <li>Let's talk about a random Java web application</li>
+            <li>Our application sends a request to a remote webservice</li>
+            <li>and waits for a response and still hogs resources</li>
+            <li>Have you ever crashed a server because all threads are busy doing nothing but waiting</li>
+        </ul>
+    </details>
+</section>
+
+<section>
+    <h2>Same thing in NodeJS</h2>
+    <h3>Non-blocking IO</h3>
+    <ul>
+        <li>Non-blocking IO</li>
+        <li>Asynchronous callback</li>
+        <li>While waiting, it <strong>sits idle !</strong></li>
+    </ul>
+    <aside>
+        <pre>
+            <code>
+            // non-blocking IO
+            wsclient.callRemoteService(error, 
+                function (response) {
+                    // do something
+                }
+            );
+            </code>
+        </pre>
+    </aside>
+    <details>
+        <ul>
+            <li>NodeJS widely uses non-blocking IO</li>
+            <li>So we must use asychronous callbacks</li>
+            <li>While waiting for a response, Node does something else, or sits idle</li>
+        </ul>
+    </details>
+</section>
+
+<section>
+    <h2>NodeJS basics</h2>
+    <h3>Main concepts</h3>
+    <ul>
+        <li>Event loop</li>
+        <li>Non-blocking IO</li>
+        <li><em>asynchronous golden jail</em></li>
+        <li>Strength: what JS <strong>has</strong> and <strong>has not</strong></li>
+    </ul>
+    <details>
+        <ul>
+            <li>The event loops sits there and waits for system events. The web is all about events - why not go all the way and use that concept in our applications?</li>
+            <li>Standard APIs are massiverly asynchronous, even though you can use their synchronous couterparts if you want.</li>
+            <li>NodeJS developers often talk about this "asynchronous golden jail"; you're bound to write async code, which makes total sense on the long run.</li>
+            <li>functional programming concepts; JS doesn't come with IO APIs;</li>
+        </ul>
+    </details>
+</section>
+
+<section>
+    <h2>NodeJS in the cloud</h2>
+    <h3>Concurrency</h3>
+    <ul>
+        <li>No shared state in memory</li>
+        <li>Makes sense in a multi-core environment</li>
+        <li>Message sending/receiving between instances</li>
+    </ul>
+    <details>
+        <ul>
+            <li>NodeJS enforces no shared state in memory</li>
+            <li>You can spawn one node instance per core to maximize throughtput</li>
+            <li>and make them communicate through messages</li>
+            <li>Actually, you can see NodeJS as a simple building block in the cloud</li>
+        </ul>
+    </details>
+</section>
+
+<section>
+    <h2>Usual complaints about callbacks</h2>
+    <h3>Haters gonna hate</h3>
+    <ul>
+        <li>Big mess of anonymous functions</li>
+        <li>Makes sense in a multi-core environment</li>
+        <li>Message sending/receiving between instances</li>
+    </ul>
+    <aside>
+    <pre>
+        <code>
+        findUserDB(err, function(user) {
+                updateUserDB(err,
+                    function(user) {...}
+                }
+            )
+        });
+        </code>    
+    </pre>
+    </aside>
+    <details>
+        <ul>
+            <li>People tend to write callbacks inside callbacks and so on...</li>
+            <li>Code readability is awful, separation of concerns as well</li>
+            <li>But that's an invalid complaint</li>
+        </ul>
+    </details>
+</section>
+
+
+<section>
+    <h2>Dealing with async in code</h2>
+    <h3>going functional</h3>
+    <ul>
+        <li>Naming callbacks</li>
+        <li>Using async frameworks like async.js</li>
+        <li>functional + async patterns</li>
+    </ul>
+    <aside>
+    <pre>
+        <code>
+        async.parallel([
+            function(){ ... },
+            function(){ ... }
+        ], callback);
+        </code>    
+    </pre>
+    </aside>
+    <details>
+        <ul>
+            <li>First, you can pull out these callbacks and name them</li>
+            <li>Even better, you should use one of the async abstraction frameworks, like async.js or Step</li>
+            <li>Async.js provides both functional items (map, reduce, filter...) and async items (parallel, series, waterfall)</li>
+        </ul>
+    </details>
+</section>
+
+
+<section>
     <h2>For making network centric programs</h2>
     <ul>
-        <li>Any protocol
-        <li>Streams
-        <li>60.000+ permanenent connection/server
+        <li>Any protocol<ul>
+        	<li>Network Packet</li>
+        	<li>HTTP, HTTPS, mail, FTP, Binary...</li>
+        </ul></li>
+        
+        <li>Streams</li>
+        <li>60.000+ permanent connection/server</li>
     </ul>
 </section>
 
 <section>
-    <h3>No, bar!</h3>
+    <h2><img src="npm.png" alt="NPM" style="height:101px"/></h2>
+    <h3>Package management & storage</h3>
     <ul>
-        <li>Text
-        <li>Images
-        <li>Videos
+        <li>Comparable to Maven + Nexus</li>
+        <li>NodeJS 1st class citizen</li>
+        <li>Repository powered by
+        	<ul>
+        	<li>NodeJS(client)</li>
+        	<li>CouchDB (server)</li>
+        	</ul>
+        </li>
     </ul>
+    <aside><pre><code>
+    npm install express
+    </code></pre></aside>
+    <details>
+    	<ul>
+    		<li>Transitive dependency</li>
+    		<li>Internally used @Yahoo & Yammer, notably</li>
+    		<li>CouchDB means repository synchronisation
+    		-> private repositories repository
+    		synchronised with main one (and external ones)</li>
+    	</ul>
+    </details>
+</section>
+
+<section>
+    <h2>Optimist</h2>
+    <h3>Scripting</h3>
+    <ul>
+        <li>Create utilities in minutes</li>
+        <li>Default values</li>
+        <li>Auto documentation</li>
+    </ul>
+    <aside><pre><code>
+	var argv = optimist
+		.usage('Serve the slides.\nUsage: $0')
+		.alias('p', 'port').default({p: 3000})
+		.describe('p', 'Set server port')
+		.boolean('h').alias('h','help')
+		.describe('h', "Print help")
+		.argv;
+	if(argv.h) return optimist.showHelp();
+	server.listen(argv.p);
+	</code></pre></aside>
+</section>
+
+<section>
+    <h2>Node PCAP</h2>
+    <h3>Packet capturing</h3>
+    <ul>
+        <li>Low level</li>
+        <li>Can do anything</li>
+        <li>better than scripts on tcpdump</li>
+    </ul>
+
+    <aside><pre><code>
+	pcap_session = pcap.createSession("", "tcp")
+	console.log("Listening on " + pcap_session.device_name);
+	pcap_session.on('packet', function (raw_packet) {
+	    var packet = pcap.decode.packet(raw_packet),
+	        data = packet.link.ip.tcp.data;
+
+	    if (data && (/safari/i).test(data.toString())) 
+	        console.log(pcap.print.packet(packet), data.toString());
+	});
+	</code></pre></aside>
+    <details>
+    <ul><li>Used for JSCOnf & NodeConf Wifi (Sashimi)</li></ul>
+    </details>    
+</section>
+
+<section>
+    <h2>Connect</h2>
+    <h3>Easy web server</h3>
+    <ul>
+        <li>Cookie</li>
+        <li>Mime</li>
+        <li>RPC</li>
+        <li>Session <br>(easily shared)</li>
+        <li>Errors</li>
+    </ul>
+    <aside><pre><code>
+	connect(
+		connect.logger(),
+		connect.static("/path/to/my/webapp")
+	).listen(3000)
+	</code></pre></aside>
+    
+</section>
+
+<section>
+    <h2><img src="express.png" alt="Express"/></h2>
+    <h3>Web framework</h3>
+    <p>Connect on Steroids</p>
+    <ul>
+        <li><strong>Routes</strong></li>
+        <li>Performances</li>
+        <li>Templates</li>
+        <li>Manages <em>environments</em><br>(development, production, ...)</li>
+    </ul>
+    <aside><pre><code>
+	var app = express.createServer();
+	app.get('/', function(req, res){
+	    res.send('Hello World');
+	}).listen(3000);
+
+    </code></pre></aside>
+    <details>performances -> caches in production</details>
+    
 </section>
 
 
 <section>
-    <h2>For making network centric programs</h2>
+    <h2>Socket.IO</h2>
+    <h3>Server push</h3>
     <ul>
-        <li>Any protocol
-        <li>Streams
-        <li>60.000+ permanenent connection/server
+	    <li><quote>The "jQuery" of realtime</quote></li>
+        <li>Damn easy realtime connection to the browser</li>
+        <li><em>Scales</em></li>
+        <li><em>Graceful downgrading</em></li>
     </ul>
+    <aside><pre><code>
+	var app = express.createServer();
+	, io = io.listen(app);
+	app.listen(80);
+	io.sockets.on('connection', function (socket) {
+	  socket.send({ hello: 'world' });
+	 });
+	</code></pre></aside>
+</section>
+
+<section>
+    <h2>Cluster</h2>
+    <h3>Rock solid apps</h3>
+    <ul>
+        <li><strong>Multi-process</strong><br>(one per core)</li>
+        <li>Reverse proxy</li>
+        <li>Auto-reloading</li>
+        <li>Daemon</li>
+        <li><strong>Run management</strong><br>(REPL)</li>
+    </ul>
+    <aside><pre><code>
+	var server = http.createServer(function(req, res){
+	 	res.writeHead(200);	res.end('Hello World');	 });
+	cluster(server).listen(3000);
+	</code></pre></aside>
+    <details>
+    <ul>
+	    <li>No downtime</li>
+    	<li>Stats (memory, files, etc.)</li>
+    	<li>Scriptable</li>
+		<li>Dynamic debugging</li>
+    </ul>
+    </details>
+</section>
+
+<section>
+    <h2>Haibu</h2>
+    <h3>Easy Deployment</h3>
+    <ul>
+        <li>Relies on <em>package.json</em></li>
+        <li>Get your dependecies from <strong>NPM</strong></li>
+        <li>Maps applications per domain</li>
+        <li>Chooses the ports</li>
+        <li>Run management APIs<br>(memory, etc.)</li>
+        <li>Node client or <strong>REST</strong> APIs</li>
+    </ul>
+    <details>
+		<ul>
+			<li>Comes from Nodejitsu open sourcing</li>
+			<li>Used in production for hosting</li>
+			<li>Plugins</li>
+		</ul>
+    </details>
+</section>
+
+<section>
+    <h2>Request</h2>
+    <h3>Easy HTTP client</h3>
+    <div>
+    <ul>
+        <li>Very simple</li>
+        <li>Useful for connecting anything in HTTP
+        <ul>
+        	<li><strong>REST services</strong></li>
+        	<li><em>Web pages</em></li>
+        	<li>File download</li>
+        </ul>
+        </li>
+        
+    </ul>
+    </div>
+    <aside><pre><code>
+	request({uri:'http://www.google.com'}, function (error, response, body) {
+		if (!error && response.statusCode == 200)
+			sys.puts(body) // Print the google web page.
+  	})
+	</code></pre></aside>
+	
+    <details>
+		<ul>
+			<li>No downtime</li>
+			<li>Stats (memory, files, etc.)</li>
+			<li>Scriptable</li>
+			<li>Dynamic debugging</li>
+		</ul>
+    </details>
+</section>
+
+<section>
+    <h2>JsDOM</h2>
+    <h3>Serverside Browser</h3>
+    <ul>
+    	<li>Serverside DOM parser</li>
+        <li><strong>Ideal for extracting content of a webpage</Strong></li>
+        <li>No API on a service ?<br>->Just jQuerify and extract</li>
+        <li><em>Make a bot</em></li>
+        <li>Use your favorite JS clientside libs</li>
+    </ul>
+    <aside><pre><code>
+	var window  = jsdom.jsdom().createWindow();
+	jsdom.jQueryify(window, function() {
+		window.$('body').hide();
+	});
+	</code></pre></aside>
+	
+    <details>
+		<ul>
+			<li>Author is the organiser fo the NodeConf</li>
+			<li>Shortcut to jQuerify</li>
+			<li>Easy to make bots</li>
+		</ul>
+    </details>
+</section>
+
+
+<section>
+    <!-- This is the first slide -->
+    <h1><strong>Your questions, now !<strong></h1>
 </section>
 <!-- Your Style -->
 <!-- Define the style of you presentation -->
 
-<!-- Maybe a font from http://www.google.com/webfonts ? -->
-<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet'>
+
 
 <style>
   html { background-color: black; }
@@ -82,6 +532,7 @@ Using Node.JS :
       font-size: 2em;
   }
   h1, h2, h3 {
+      font-family: 'OrbitronBold', arial, serif;
       margin-top: 50px;
       text-align: center;
   }
@@ -105,7 +556,7 @@ Using Node.JS :
   }
 
   /* Before */
-  section { left: -150%; }
+  /*section { left: -150%; }*/
   /* Now */
   section[aria-selected] { left: 0; }
   /* After */
@@ -145,6 +596,7 @@ Using Node.JS :
   var friendWindows = [];
   var idx = 1;
   var slides;
+  var socket = {send:function(){}};
 
   /* main() */
 
@@ -255,13 +707,33 @@ Using Node.JS :
     setSlide();
   }
   function forward() {
+  
     if (idx >= slides.length) return;
     idx++;
     setSlide();
   }
+  /*WS events*/
+  
+  if(document.location.hash !== "#noremote") {
+  	if(!!console) console.log("Activating remotable mode");
+	socket = io.connect() || {on:function(evt){if(!!console)console.log("socket is not working, including for :",evt)}, send:function(){}};
+	socket.on('back', back);
+	socket.on('forward', forward);
+	socket.on('notify', function(){if(!!console)console.log(arguments)});
+  }
+  /*---------*/
+  
   function setSlide() {
+  	if(socket && socket.emit) socket.emit('slide', idx, new Date());
     var old = document.querySelector("section[aria-selected]");
+    var previous = document.querySelector("section:nth-of-type("+ (idx-1>=0 ? idx-1 : slides.length) +")");
     var next = document.querySelector("section:nth-of-type("+ idx +")");
+    if (previous) {
+      var oldPrevious = document.querySelector("section[data-previous]");
+      if(oldPrevious)
+      	oldPrevious.removeAttribute("data-previous");
+      previous.setAttribute("data-previous","true");
+    }
     if (old) {
       old.removeAttribute("aria-selected");
       var video = old.querySelector("video");
@@ -272,7 +744,7 @@ Using Node.JS :
       var video = next.querySelector("video");
       if (video) { video.play(); }
     } else {
-      console.warn("No such slide: " + idx);
+      if(!!console)console.warn("No such slide: " + idx);
       idx = 0;
       for (var i = 0; i < slides.length; i++) {
           if (slides[i].hasAttribute("aria-selected")) {
@@ -287,4 +759,88 @@ Using Node.JS :
   }
 </script>
 <!-- vim: set fdm=marker: }}} -->
+<style>
+body {
+	background: black;
+}
+section ul {
+    display: inline-block;
+    font-size: 35px;
+    margin-left: 50px;
+    margin-top: 70px;
+    min-width: 310px;
+    padding-right: 40px;
+    text-align: right;
+    list-style : none;
+}
+section[aria-selected] ul {
+    border-right: 4px solid white;
+}
+section {
+	-moz-transition: all 400ms linear 0s;
+    -webkit-transition: all 400ms linear 0s;
+    -o-transition: all 400ms linear 0s;
+    -ms-transition: all 400ms linear 0s;
+    transition: all 400ms linear 0s;
+}
+section[aria-selected] {
+	color: white;
+	background: -moz-radial-gradient(center center 45deg, #333333 0%, #1C1C1C 50%) repeat scroll 0 0 #1C1C1C;
+	text-shadow: 0 0 6px rgba(0, 0, 0, 100);
+    -moz-text-shadow: 0 0 6px rgba(0, 0, 0, 100);
+}
+section:not([aria-selected]) {
+    -moz-transform: scale(0.9);
+    -webkit-transform:  scale(0.9);
+    -o-transform:  scale(0.9);
+    transform:  scale(0.9);
+    pointer-events: none;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.1);
+    -moz-text-shadow: 0 0 6px rgba(255, 255, 255, 0.1);
+    color:black!important;
+}
+section:not([aria-selected]) img {
+	opacity:0.01;
+}
+section>h3 {
+	color: gray;
+	margin-bottom: 0;
+	margin-left: 0;
+	position: absolute;
+	bottom: 20px;
+	left: 10px;
+	width: 500px;
+	
+	transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	-webkit-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    
+    transform-origin: top left;
+    -moz-transform-origin: top left;
+    -webkit-transform-origin: top left;
+    -o-transform-origin: top left;
+    -ms-transform-origin: top left;
+}
+section>aside {
+	display: inline-block;
+}
+section>p, section>ul, section>aside {
+	margin-left: 50px;
+}
+
+section>ul ul>li {
+	text-align:left;
+}
+section code {
+	font-size: 15px;
+}
+strong {
+	color: orange;
+}
+em {
+	color: blue;
+}
+</style>
 </body></html>

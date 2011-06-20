@@ -1,12 +1,24 @@
 <!DOCTYPE html>
-<meta charset="utf8">
-<title>master</title>
+<head>
+ <meta charset="utf-8">
+ <title>Presenter Mode</title>
+ <script src="/socket.io/socket.io.js"></script>
+</head>
 
 <link href='http://fonts.googleapis.com/css?family=Copse' rel='stylesheet' type='text/css'>
 
-<script> var URL = "slides.html"; </script>
+<script> var URL = "../#noremote"; </script>
 
 <script>
+	var socket = io.connect() ||
+		{ on: function(evt){console.log("socket is not working, including for :",evt)},
+		emit: function(){console.log("socket is not working, this will not be sent :",arguments)}
+		};
+		
+	socket.on('connect', function() {
+		if (typeof console !== "undefined") console.log("Connected!");
+	});
+	
     function $(query) { return document.querySelector(query)}
     function $$(query) { return document.querySelectorAll(query)}
     NodeList.prototype.forEach = function(fun) {
@@ -51,8 +63,8 @@
             }
         }
     }
-    function back() { views.present.postMessage("back", document.location); }
-    function forward() { views.present.postMessage("forward", document.location); }
+    function back() { socket.emit('back', new Date()); views.present.postMessage("back", document.location); }
+    function forward() { socket.emit('forward', new Date()); views.present.postMessage("forward", document.location); }
     function toggleContent() {
         views.present.postMessage("toggleContent", document.location);
         views.remote.postMessage("toggleContent", document.location);
@@ -60,7 +72,7 @@
     function onkeydown(e) {
         // Don't intercept keyboard shortcuts
         if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
-            return;
+            return true;
         }
         if ( e.keyCode == 37 // left arrow
           || e.keyCode == 33 // page up
@@ -83,7 +95,10 @@
     var start;
     function startTimer() {
         if (!start) {
+
             start = new Date();
+            socket.emit('forward', idx, start);
+            
             var minutesElt = $("#minutes");
             var secondsElt = $("#seconds");
             minutesElt.innerHTML = "00";
@@ -223,5 +238,5 @@
     <p id="content"></p>
 </div>
 
-
+</body></html>
 
